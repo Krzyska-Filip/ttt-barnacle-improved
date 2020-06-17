@@ -27,7 +27,6 @@ hook.Add("TTTPrepareRound", "RestartHalo2", function()
 end)
 
 net.Receive("ttt_barnacle_halo_push", function()
-    local client = LocalPlayer()
     local ent = net.ReadEntity()
     local option = net.ReadBool()
 

@@ -1,5 +1,4 @@
 local brEnt = {}
-local index = 0
 
 --Display every barnacle
 hook.Add("PreDrawHalos", "DrawBarnacle", function()
@@ -14,32 +13,7 @@ hook.Add("PreDrawHalos", "DrawBarnacle", function()
     end
 end)
 
---Remove all entities form list
-hook.Add("TTTBeginRound", "RestartHalo", function()
-    index = 0
-    table.Empty( brEnt )
-end)
-
---Remove all entities form list | Double check
-hook.Add("TTTPrepareRound", "RestartHalo2", function()
-    index = 0
-    table.Empty( brEnt )
-end)
-
 net.Receive("ttt_barnacle_halo_push", function()
-    local ent = net.ReadEntity()
-    local option = net.ReadBool()
-
-    if option then --add barnacle to the list.
-        brEnt[index] = ent
-        index = index + 1
-    else --remove barnacle form the list.
-        if table.IsEmpty(brEnt) then return end
-        for k, v in pairs(brEnt) do
-            if ent == v then 
-                brEnt[k] = false
-            end
-        end
-    end
+    brEnt = net.ReadTable()
+    table.insert(brEnt, false)
 end)
-

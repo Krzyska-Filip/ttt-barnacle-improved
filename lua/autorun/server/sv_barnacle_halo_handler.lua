@@ -1,9 +1,12 @@
 util.AddNetworkString("ttt_barnacle_halo_push")
 local traitorList = {}
-local index = 0
+local tindex = 0
+local brEnt = {}
+local eindex = 0
 
 --Get list of traitors in order send them information about barnacle
 local function createTraitorList()
+    PrintMessage(HUD_PRINTTALK, "Tlist")
     local players = player.GetAll()
     for i = 1, #players do
         local p = players[i]
@@ -15,18 +18,29 @@ hook.Add( "TTTBeginRound", "TraitorList", createTraitorList)
 
 --Clear list of traitor
 hook.Add( "TTTPrepareRound", "ClearTraitorList", function()
-    table.Empty(traitorList)
-    index = 0
+    traitorList = {}
+    tindex = 0
+    brEnt = {}
+    eindex = 0
+end)
+hook.Add( "TTTEndRound", "ClearTraitorList2", function()
+    brEnt = {}
+    eindex = 0
+    net.Start("ttt_barnacle_halo_push")
+    net.WriteTable(brEnt)
+    net.Send(traitorList)
+    traitorList = {}
+    tindex = 0
 end)
 
 --Check if created entity is barnacle, if so send message to all traitors.
 hook.Add( "OnEntityCreated", "BarnacleHalo", function( ent )
     if ent:GetClass() ~= "npc_barnacle" then return end
     if table.IsEmpty(traitorList) then return end
-
+    brEnt[eindex] = ent
+    eindex = eindex + 1
     net.Start("ttt_barnacle_halo_push")
-    net.WriteEntity(ent)
-    net.WriteBool(true)
+    net.WriteTable(brEnt)
     net.Send(traitorList)
 end)
 
@@ -34,8 +48,12 @@ end)
 hook.Add("OnNPCKilled", "BarnacleAlive", function(npc)
     if npc:GetClass() ~= "npc_barnacle" then return end
     if table.IsEmpty(traitorList) then return end
+    for k, v in pairs(brEnt) do
+        if npc == v then 
+            brEnt[k] = false
+        end
+    end
     net.Start("ttt_barnacle_halo_push")
-    net.WriteEntity(npc)
-    net.WriteBool(false)
+    net.WriteTable(brEnt)
     net.Send(traitorList)
 end)

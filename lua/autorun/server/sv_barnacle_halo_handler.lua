@@ -6,7 +6,6 @@ local eindex = 0
 
 --Get list of traitors in order send them information about barnacle
 local function createTraitorList()
-    PrintMessage(HUD_PRINTTALK, "Tlist")
     local players = player.GetAll()
     for i = 1, #players do
         local p = players[i]

@@ -38,9 +38,11 @@ hook.Add( "OnEntityCreated", "BarnacleHalo", function( ent )
     if table.IsEmpty(traitorList) then return end
     brEnt[eindex] = ent
     eindex = eindex + 1
-    net.Start("ttt_barnacle_halo_push")
-    net.WriteTable(brEnt)
-    net.Send(traitorList)
+    timer.Simple( 1, function() 
+        net.Start("ttt_barnacle_halo_push")
+        net.WriteTable(brEnt)
+        net.Send(traitorList)
+    end)
 end)
 
 --Check if killed NPC was barnacle, if so send message to all traitors

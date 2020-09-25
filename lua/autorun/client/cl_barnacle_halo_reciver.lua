@@ -15,5 +15,4 @@ end)
 
 net.Receive("ttt_barnacle_halo_push", function()
     brEnt = net.ReadTable()
-    table.insert(brEnt, false)
 end)
